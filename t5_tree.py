@@ -29,7 +29,7 @@ def add_edges(graph, node, pos, x=0, y=0, layer=1):
     return graph
 
 
-def draw_tree(tree_root, colors):
+def draw_tree(tree_root, colors, title='Візуалізація дерева'):
     tree = nx.DiGraph()
     pos = {tree_root.id: (0, 0)}
     tree = add_edges(tree, tree_root, pos)
@@ -37,7 +37,8 @@ def draw_tree(tree_root, colors):
     node_colors = [colors.get(node, 'skyblue') for node in tree.nodes()]
     labels = {node[0]: node[1]['label'] for node in tree.nodes(data=True)}
 
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(8, 6))
+    plt.title(title, fontsize=12)
     nx.draw(tree, pos=pos, labels=labels, arrows=False, node_size=2500, node_color=node_colors)
     plt.show()
 
@@ -56,9 +57,11 @@ def build_heap_tree(heap, index=0):
 
 def generate_color(step, total_steps):
     base_color = [135, 206, 250]
-    #TODO Додати обрахунок відтінку кольору відповідно до послідовності його проходження
+    # Обрахунок відтінку кольору відповідно до послідовності його проходження
     darken_factor = None
     new_color = None
+    darken_factor = step / total_steps
+    new_color = [int(c * (1 - darken_factor)) for c in base_color]
     return f'#{new_color[0]:02x}{new_color[1]:02x}{new_color[2]:02x}'
 
 
@@ -68,7 +71,15 @@ def dfs_visualize(root, total_steps):
     colors = {}
     step = 0
 
-    #TODO Реалізація алгоритму DFS
+    # Реалізація алгоритму DFS
+    while root and stack:
+        node = stack.pop()
+        if node and node not in visited:
+            visited.add(node)
+            step += 1
+            colors[node.id] = generate_color(step, total_steps)
+            stack.append(node.right)
+            stack.append(node.left)
 
     return colors
 
@@ -78,7 +89,15 @@ def bfs_visualize(root, total_steps=1):
     colors = {}
     step = 0
 
-    #TODO Реалізація алгоритму BFS
+    # Реалізація алгоритму BFS
+    while root and queue:
+        node = queue.pop(0)
+        if node and node not in visited:
+            visited.add(node)
+            step += 1
+            colors[node.id] = generate_color(step, total_steps)
+            queue.append(node.left)
+            queue.append(node.right)
 
     return colors
 
@@ -100,8 +119,8 @@ if __name__ == '__main__':
 
     # DFS візуалізація
     dfs_colors = dfs_visualize(heap_tree_root, total_steps)
-    draw_tree(heap_tree_root, dfs_colors)
+    draw_tree(heap_tree_root, dfs_colors, title='DFS Візуалізація')
 
     # BFS візуалізація
     bfs_colors = bfs_visualize(heap_tree_root, total_steps)
-    draw_tree(heap_tree_root, bfs_colors)
+    draw_tree(heap_tree_root, bfs_colors, title='BFS Візуалізація')
