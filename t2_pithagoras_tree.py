@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def pythagoras_tree(ax, x, y, size, angle, depth):
+def draw_branch(ax, x, y, size, angle, depth):
     if depth == 0:
         return
     
@@ -27,13 +27,13 @@ def pythagoras_tree(ax, x, y, size, angle, depth):
     left_angle = angle + 45
     left_x = top_x + new_size/2 * np.sin(np.radians(left_angle))
     left_y = top_y + new_size/2 * np.cos(np.radians(left_angle))
-    pythagoras_tree(ax, left_x, left_y, new_size, left_angle, depth - 1)
+    draw_branch(ax, left_x, left_y, new_size, left_angle, depth - 1)
     
     # Права гілка
     right_angle = angle - 45
     right_x = top_x + new_size/2 * np.sin(np.radians(right_angle))
     right_y = top_y + new_size/2 * np.cos(np.radians(right_angle))
-    pythagoras_tree(ax, right_x, right_y, new_size, right_angle, depth - 1)
+    draw_branch(ax, right_x, right_y, new_size, right_angle, depth - 1)
 
 def main():
     recursion_level = input("Enter the recursion level (e.g., 5): ")
@@ -53,7 +53,7 @@ def main():
     ax.axis('off')
 
     # Побудова дерева
-    pythagoras_tree(ax, 0, 0, 1, 0, recursion_level)
+    draw_branch(ax, 0, 0, 1, 0, recursion_level)
 
     plt.show()
 
